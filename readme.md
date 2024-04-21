@@ -3,9 +3,9 @@
 ## features:
 
 - points details (season 1 and 2)
-- borrowing positions [todo]
-- lending positions [todo]
+- borrowing positions
+- lending positions
 
 ### references:
 
-1. [hubbleprotocol public API](https://github.com/hubbleprotocol/hubble-public-api-docs?tab=readme-ov-file#points)
+[hubbleprotocol public API](https://github.com/hubbleprotocol/hubble-public-api-docs?tab=readme-ov-file#points)
