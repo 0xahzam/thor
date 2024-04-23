@@ -25,6 +25,9 @@ async fn main() -> Result<(), Error> {
                 "Net Account Value: ${}",
                 current_positions.net_account_value
             );
+            println!("Current LTV: {}", current_positions.current_ltv);
+            println!("Liquidation LTV: {}", current_positions.liquidation_ltv);
+            println!("Health Factor : {}%", current_positions.health_factor);
         }
         Err(err) => eprintln!("Error retrieving current positions: {}", err),
     }

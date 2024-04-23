@@ -12,6 +12,9 @@ pub struct CurrentPositions {
     pub total_deposit: f64,     // User's Total deposited amount
     pub total_borrow: f64,      // User' Total borrowed amount
     pub net_account_value: f64, // Net account value
+    pub current_ltv: f64,       // Current Loan to Value
+    pub liquidation_ltv: f64,   // Liquidaiton LTV
+    pub health_factor: f64,     // Health factor of the position (%)
 }
 
 // Struct representing Season 2 points data
@@ -57,6 +60,9 @@ impl GetKamino {
                     total_deposit: 0.0,
                     total_borrow: 0.0,
                     net_account_value: 0.0,
+                    current_ltv: 0.0,
+                    liquidation_ltv: 0.0,
+                    health_factor: 0.0,
                 });
             }
         };
@@ -70,20 +76,43 @@ impl GetKamino {
                     total_deposit: 0.0,
                     total_borrow: 0.0,
                     net_account_value: 0.0,
+                    current_ltv: 0.0,
+                    liquidation_ltv: 0.0,
+                    health_factor: 0.0,
                 });
             }
         };
 
         // Parse values from JSON
-        let user_total_deposit = get_f64_from_json(&refreshed_stats_json, "userTotalDeposit");
-        let user_total_borrow = get_f64_from_json(&refreshed_stats_json, "userTotalBorrow");
+        let total_deposit = get_f64_from_json(&refreshed_stats_json, "userTotalDeposit");
+        let total_borrow = get_f64_from_json(&refreshed_stats_json, "userTotalBorrow");
         let net_account_value = get_f64_from_json(&refreshed_stats_json, "netAccountValue");
+
+        // Risk adjust debt value
+        let user_total_borrow_borrow_factor_adjusted =
+            get_f64_from_json(&refreshed_stats_json, "userTotalBorrowBorrowFactorAdjusted");
+
+        // Represents the threshold at which the position becomes eligible for liquidation if borrowing exceeds this limit
+        let borrow_liquidation_limit =
+            get_f64_from_json(&refreshed_stats_json, "borrowLiquidationLimit");
+
+        // Current Loan to Value
+        let current_ltv = user_total_borrow_borrow_factor_adjusted / total_deposit;
+
+        // Liquidation LTV
+        let liquidation_ltv = borrow_liquidation_limit / total_deposit;
+
+        // Calculating position's health score
+        let health_factor = (liquidation_ltv - current_ltv) / liquidation_ltv * 100.0;
 
         // Return current positions data
         Ok(CurrentPositions {
-            total_deposit: user_total_deposit,
-            total_borrow: user_total_borrow,
-            net_account_value: net_account_value,
+            total_deposit,
+            total_borrow,
+            net_account_value,
+            current_ltv,
+            liquidation_ltv,
+            health_factor,
         })
     }
 
