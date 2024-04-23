@@ -5,6 +5,7 @@
 - points details (season 1 and 2)
 - borrowing positions
 - lending positions
+- health factor and current LTV
 
 ### references:
 
